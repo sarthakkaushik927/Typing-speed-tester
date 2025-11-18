@@ -17,8 +17,6 @@ import {
   RotateCcw
 } from "lucide-react";
 
-/* -------------------- Global declaration for window.storage -------------------- */
-/* Adjust if your real storage API differs */
 declare global {
   interface Window {
     storage: {
@@ -27,8 +25,6 @@ declare global {
     };
   }
 }
-
-/* -------------------- Interfaces -------------------- */
 
 interface PracticeMode {
   id: string;
@@ -71,8 +67,6 @@ interface TypingSpeedTesterProps {
   user: { email?: string } | null;
   onLogout: () => void;
 }
-
-/* -------------------- Data -------------------- */
 
 const quotesDatabase: string[] = [
   "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.",
@@ -198,12 +192,7 @@ const achievements = [
   { name: "Consistent", requirement: "3 day streak", icon: "🔥", achieved: false }
 ];
 
-/* -------------------- Component -------------------- */
-
-export default function TypingSpeedTester({
-  user,
-  onLogout
-}: TypingSpeedTesterProps) {
+export default function TypingSpeedTester({ user, onLogout }: TypingSpeedTesterProps) {
   const [mode, setMode] = useState<string>("menu");
   const [selectedMode, setSelectedMode] = useState<PracticeMode | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
@@ -235,12 +224,9 @@ export default function TypingSpeedTester({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const timerRef = useRef<number | null>(null);
 
-  /* -------------------- Effects -------------------- */
-
   useEffect(() => {
     loadHistory();
     loadStreak();
-    // focus hidden input so keydown works immediately
     setTimeout(() => inputRef.current?.focus(), 300);
   }, []);
 
@@ -261,8 +247,6 @@ export default function TypingSpeedTester({
     }
     return;
   }, [startTime, timeLeft, isComplete]);
-
-  /* -------------------- Storage helpers -------------------- */
 
   const loadHistory = async () => {
     try {
@@ -330,8 +314,6 @@ export default function TypingSpeedTester({
     }
   };
 
-  /* -------------------- Test flow -------------------- */
-
   const startPractice = (practiceMode: PracticeMode) => {
     const randomQuote =
       quotesDatabase[Math.floor(Math.random() * quotesDatabase.length)];
@@ -366,13 +348,11 @@ export default function TypingSpeedTester({
     setIsComplete(false);
   };
 
-  /* -------------------- Key handling & stats -------------------- */
-
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     try {
       setCapsLockOn(e.getModifierState("CapsLock"));
     } catch {
-      // some browsers may not support getModifierState on this event
+      // ignore
     }
 
     if (e.key === "Escape") {
@@ -386,7 +366,6 @@ export default function TypingSpeedTester({
       setStartTime(Date.now());
     }
 
-    // guard currentText index presence
     const currentChar = currentText.charAt(currentIndex);
 
     if (e.key === currentChar && e.key.length === 1) {
@@ -493,10 +472,10 @@ export default function TypingSpeedTester({
       startPractice(selectedMode);
     } else if (selectedLesson) {
       startLesson(selectedLesson);
+    } else {
+      resetTestState();
     }
   };
-
-  /* -------------------- Helpers -------------------- */
 
   const getCharClass = (index: number) => {
     if (index < currentIndex) {
@@ -532,21 +511,16 @@ export default function TypingSpeedTester({
     return testHistory.filter((t) => new Date(t.timestamp).toDateString() === today).length;
   };
 
-  /* -------------------- Render -------------------- */
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden relative">
-      {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-500/5 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
         <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
       </div>
 
-      {/* Menu Screen */}
       {mode === "menu" && (
         <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
-          {/* User Info & Logout Button */}
           <div className="absolute top-4 right-4 z-20 flex items-center gap-3">
             <span className="text-gray-400 text-sm hidden sm:block">Welcome, {user?.email}</span>
             <button
@@ -557,7 +531,6 @@ export default function TypingSpeedTester({
             </button>
           </div>
 
-          {/* Header */}
           <div className="text-center mb-8 sm:mb-12 relative">
             <div className="inline-block relative group cursor-pointer">
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
@@ -570,7 +543,6 @@ export default function TypingSpeedTester({
             <p className="text-gray-400 text-base sm:text-lg animate-fade-in">Master your keyboard, one keystroke at a time</p>
           </div>
 
-          {/* Quick Stats Dashboard */}
           {testHistory.length > 0 ? (
             <div className="mb-8">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -623,7 +595,6 @@ export default function TypingSpeedTester({
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className="mt-6 bg-gray-800/50 border border-gray-700 rounded-2xl p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -648,7 +619,6 @@ export default function TypingSpeedTester({
             </div>
           )}
 
-          {/* Practice Modes */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
@@ -689,7 +659,6 @@ export default function TypingSpeedTester({
             </div>
           </div>
 
-          {/* Lessons */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
@@ -721,7 +690,6 @@ export default function TypingSpeedTester({
             </div>
           </div>
 
-          {/* Recent History */}
           {testHistory.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -771,10 +739,8 @@ export default function TypingSpeedTester({
         </div>
       )}
 
-      {/* Test/Lesson Screen */}
       {(mode === "test" || mode === "lesson") && (
         <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
-          {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
             <button onClick={backToMenu} className="group flex items-center gap-2 text-gray-400 hover:text-white transition-colors px-4 py-2 rounded-lg hover:bg-gray-800">
               <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
@@ -788,7 +754,6 @@ export default function TypingSpeedTester({
             </div>
           </div>
 
-          {/* Stats Bar */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             <div className="relative bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-4 overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 to-orange-400/20 group-hover:from-yellow-400/10 group-hover:to-orange-400/30 transition-all" />
@@ -820,22 +785,19 @@ export default function TypingSpeedTester({
             </div>
           </div>
 
-          {/* Caps Lock Warning */}
           {capsLockOn && (
             <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-3 mb-4 text-center text-yellow-400 animate-pulse">⚠️ Caps Lock is ON</div>
           )}
 
-          {/* Text Display */}
-          <div className="relative bg-gray-800/50 border-2 border-gray-700 rounded-2xl p-6 sm:p-8 mb-6 min-h-[150px] sm:min-h-[200px] flex items-center overflow-x-auto group">
+          <div className="relative bg-gray-800/50 border-2 border-gray-700 rounded-2xl p-6 sm:p-8 mb-6 min-h-[150px] sm:min-h-[200px] flex items-start overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-            <div className="relative text-xl sm:text-2xl lg:text-3xl leading-relaxed font-mono select-none break-words">
+            <div className="relative text-xl sm:text-2xl lg:text-3xl leading-relaxed font-mono select-none break-all whitespace-normal">
               {currentText.split("").map((char, idx) => (
                 <span key={idx} className={`${getCharClass(idx)} transition-all duration-100 px-0.5`}>{char === " " ? "\u00A0" : char}</span>
               ))}
             </div>
           </div>
 
-          {/* Hidden Input */}
           <input
             ref={inputRef}
             type="text"
@@ -845,7 +807,6 @@ export default function TypingSpeedTester({
             autoFocus
           />
 
-          {/* Instructions */}
           {!startTime && !isComplete && (
             <div className="text-center">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500/10 border border-purple-500/30 rounded-full text-gray-400 animate-bounce">
@@ -855,10 +816,8 @@ export default function TypingSpeedTester({
             </div>
           )}
 
-          {/* Completion Screen */}
           {isComplete && (
             <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
-              {/* Confetti Particles */}
               {particles.map((p) => (
                 <div
                   key={p.id}
@@ -939,6 +898,7 @@ export default function TypingSpeedTester({
         .animate-scale-in { animation: scale-in 0.5s ease-out; }
         .animate-gradient { background-size: 200% 200%; animation: gradient 3s ease infinite; }
         .animate-fall { animation: fall linear forwards; }
+        @keyframes pulse { 0% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.3; transform: scale(1); } }
       `}</style>
     </div>
   );

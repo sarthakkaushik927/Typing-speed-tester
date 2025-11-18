@@ -1,8 +1,7 @@
-// AuthScreen.tsx
+
 import React, { useState } from 'react';
 import { Zap, Sparkles } from 'lucide-react';
 
-// Define types for props and user
 type User = {
   email: string;
   password?: string;
@@ -27,13 +26,13 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     const userStorageKey = `user-${email}`;
 
     if (isLogin) {
-      // --- Login Logic ---
+      
       try {
         const result = window.localStorage.getItem(userStorageKey);
         if (result) {
           const user: User = JSON.parse(result);
           if (user.password === password) {
-            onAuthSuccess(user); // Success!
+            onAuthSuccess(user); 
           } else {
             setError('Invalid email or password.');
           }
@@ -44,7 +43,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
         setError('An error occurred. Please try again.');
       }
     } else {
-      // --- Signup Logic ---
+     
       if (!email || !password) {
         setError('Email and password are required.');
         setIsLoading(false);
@@ -57,7 +56,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
         } else {
           const newUser: User = { email, password };
           window.localStorage.setItem(userStorageKey, JSON.stringify(newUser));
-          onAuthSuccess(newUser); // Automatically log in after sign up
+          onAuthSuccess(newUser); 
         }
       } catch (err) {
         setError('An error occurred during sign up.');

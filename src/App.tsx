@@ -13,7 +13,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for an existing user session on app load
+    
     const checkAuthSession = () => {
       try {
         const result = window.localStorage.getItem('typingUserSession');
@@ -33,7 +33,7 @@ export default function App() {
 
   const handleAuthSuccess = (userData: User) => {
     try {
-      // Create the user's session
+      
       window.localStorage.setItem('typingUserSession', JSON.stringify(userData));
       setUser(userData);
     } catch (error) {
@@ -43,7 +43,7 @@ export default function App() {
 
   const handleLogout = () => {
     try {
-      // Clear the user's session
+      
       window.localStorage.setItem('typingUserSession', JSON.stringify(null)); 
       setUser(null);
     } catch (error) {
@@ -52,7 +52,7 @@ export default function App() {
   };
 
   if (isLoading) {
-    // Simple loading screen to prevent auth flicker
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
         <span className="text-white text-xl">Loading...</span>
@@ -60,12 +60,12 @@ export default function App() {
     );
   }
 
-  // This is the core logic:
+  
   if (!user) {
-    // If no user, show the login/signup screen
+    
     return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
   }
 
-  // If user is logged in, show the main app
+ 
   return <TypingSpeedTester user={user} onLogout={handleLogout} />;
 }
